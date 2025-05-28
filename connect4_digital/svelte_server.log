@@ -5465,3 +5465,13 @@ https://svelte.dev/e/css_expected_identifier
 7:24:23 PM [vite] (ssr) page reload src/routes/+page.svelte
 7:24:25 PM [vite] (ssr) page reload src/routes/+page.svelte
 7:24:56 PM [vite] (ssr) page reload src/routes/+page.svelte
+7:25:13 PM [vite] (client) page reload .svelte-kit/generated/client/nodes/0.js
+7:25:13 PM [vite] (client) page reload .svelte-kit/generated/client/nodes/1.js
+7:25:13 PM [vite] (client) page reload .svelte-kit/generated/client/app.js
+7:25:13 PM [vite] (client) page reload .svelte-kit/generated/client/matchers.js
+7:25:13 PM [vite] (ssr) page reload .svelte-kit/generated/server/internal.js
+7:25:13 PM [vite] (client) page reload .svelte-kit/generated/root.js
+7:25:13 PM [vite] (ssr) page reload .svelte-kit/generated/root.js
+7:25:28 PM [vite] (ssr) page reload src/routes/+page.svelte
+7:26:02 PM [vite] (client) hmr update /src/routes/+page.svelte
+7:26:02 PM [vite] (ssr) page reload src/routes/+page.svelte
