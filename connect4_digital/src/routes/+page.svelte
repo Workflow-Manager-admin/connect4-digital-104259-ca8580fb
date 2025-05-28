@@ -159,7 +159,7 @@
 	<div class="game-board" role="grid" aria-label="Connect Four Board">
 		<!-- Col selector for dropping disc -->
 		<div class="drop-row">
-			{#each Array(COLS) as _, colIdx}
+			{#each Array(COLS) as _, colIdx (colIdx)}
 				<button
 					class="drop-btn"
 					disabled={gameOver || isColumnFull(colIdx)}
@@ -175,7 +175,7 @@
 		<!-- Game Grid -->
 		<div class="grid">
 			{#each Array(ROWS) as _, rowIdx (rowIdx)}
-				<div class="row">
+				<div class="row" key={rowIdx}>
 					{#each Array(COLS) as _, colIdx (colIdx)}
 						<!-- Each cell in the board, position for disc or animation -->
 						<div
@@ -183,14 +183,14 @@
 							role="gridcell"
 							aria-label="{getCellDesc(rowIdx, colIdx)}"
 							data-row={rowIdx} data-col={colIdx}
-							style="{winningCoords.has(`${rowIdx},${colIdx}`) && winner ? `box-shadow: 0 0 8px 4px ${COLORS.accent};` : ''}">
+							style="{winningCoords.has(`${rowIdx},${colIdx}`) && winner ? 'box-shadow: 0 0 8px 4px #E53935;' : ''}">
 							<!-- Animated disc drop (if in progress & in this cell) -->
 							{#if animatingColumns[colIdx] !== null && animatingColumns[colIdx] === rowIdx}
 								<div class="disc animated" style="background:{getDiscColor(currentPlayer)}"></div>
 							{:else if board[rowIdx][colIdx] !== 0}
 								<div
 									class="disc"
-									style="background:{getDiscColor(board[rowIdx][colIdx])}; {winningCoords.has(`${rowIdx},${colIdx}`) && winner ? `box-shadow: 0 0 12px 5px ${COLORS.accent}` : ''}"
+									style="background:{getDiscColor(board[rowIdx][colIdx])}; {winningCoords.has(`${rowIdx},${colIdx}`) && winner ? 'box-shadow: 0 0 12px 5px #E53935' : ''}"
 								></div>
 							{:else}
 								<div class="disc empty"></div>
@@ -250,7 +250,7 @@
 		font-size: 2.1rem;
 		font-weight: 700;
 		margin-bottom: 0.7em;
-		color: {COLORS.primary};
+		color: #1976D2;
 		letter-spacing: 1px;
 		text-shadow: 0 2px 10px #e3e9f0;
 	}
@@ -287,7 +287,7 @@
 	.grid {
 		background: #dbeffd;
 		border-radius: 9px 9px 18px 18px/15px 15px 30px 30px;
-		border: 5px solid {COLORS.primary};
+		border: 5px solid #1976D2;
 		box-shadow: 0 4px 18px 0 #cee2f5;
 		padding: 6px 6px 3px 6px;
 	}
@@ -340,7 +340,7 @@
 		gap: 0.4em;
 	}
 	.reset-btn {
-		background: {COLORS.secondary};
+		background: #FFC107;
 		border: none;
 		color: #333;
 		font-weight: 700;
