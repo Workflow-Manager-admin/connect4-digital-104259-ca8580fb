@@ -1,44 +1,40 @@
 <script lang="ts">
-	// Game Constants
 	const ROWS = 6;
 	const COLS = 7;
 	const PLAYER_1 = 1;
 	const PLAYER_2 = 2;
 	const COLORS = {
-		primary: "#1976D2",  // Player 1 disc (blue)
-		secondary: "#FFC107", // Player 2 disc (yellow)
-		accent: "#E53935"     // Highlight for wins
+		primary: "#1976D2",
+		secondary: "#FFC107",
+		accent: "#E53935"
 	};
 
-	// Game State
 	let board: number[][] = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
 	let currentPlayer: number = PLAYER_1;
 	let gameOver: boolean = false;
 	let winner: number | null = null;
-	let animatingColumns: number[] = Array(COLS).fill(null); // For animating disc drop per column
+	let animatingColumns: (number | null)[] = Array(COLS).fill(null);
 	let winningCoords: Set<string> = new Set();
 
-	/**
-	 * PUBLIC_INTERFACE
-	 * Handle drop action on a column, triggers disc drop for current player
-	 */
+	// PUBLIC_INTERFACE
 	function dropDisc(col: number) {
 		if (gameOver || isColumnFull(col) || animatingColumns[col] !== null) return;
 		const row = getAvailableRow(col);
 		if (row === -1) return;
 
-		// Animate disc drop
-		animatingColumns = animatingColumns.slice();
+		animatingColumns = [...animatingColumns];
 		animatingColumns[col] = 0;
 
 		const animationInterval = setInterval(() => {
 			if (animatingColumns[col]! < row) {
-				animatingColumns = animatingColumns.slice();
+				animatingColumns = [...animatingColumns];
 				animatingColumns[col]! += 1;
 			} else {
 				clearInterval(animationInterval);
-				board = board.map((r, idx) => idx === row ? [...r.slice(0, col), currentPlayer, ...r.slice(col + 1)] : r.map((v) => v));
-				animatingColumns = animatingColumns.slice();
+				board = board.map((r, idx) =>
+					idx === row ? [...r.slice(0, col), currentPlayer, ...r.slice(col + 1)] : r.map((v) => v)
+				);
+				animatingColumns = [...animatingColumns];
 				animatingColumns[col] = null;
 
 				const { hasWon, coords } = checkWin(row, col, currentPlayer);
@@ -48,7 +44,7 @@
 					winningCoords = coords;
 				} else if (isBoardFull()) {
 					gameOver = true;
-					winner = 0; // Tie
+					winner = 0;
 				} else {
 					currentPlayer = currentPlayer === PLAYER_1 ? PLAYER_2 : PLAYER_1;
 				}
@@ -56,36 +52,24 @@
 		}, 50);
 	}
 
-	/**
-	 * Get the lowest available row index in the specified column
-	 */
 	function getAvailableRow(col: number): number {
 		for (let row = ROWS - 1; row >= 0; row--) {
-			if (board[row][col] === 0 && (animatingColumns[col] === null || animatingColumns[col] <= row)) {
+			if (board[row][col] === 0 && (animatingColumns[col] === null || animatingColumns[col]! <= row)) {
 				return row;
 			}
 		}
 		return -1;
 	}
 
-	/**
-	 * Check if a column is full
-	 */
 	function isColumnFull(col: number): boolean {
 		return board[0][col] !== 0 || animatingColumns[col] !== null;
 	}
 
-	/**
-	 * Check if the board is full
-	 */
 	function isBoardFull(): boolean {
-		return board.every(row => row.every(cell => cell !== 0));
+		return board.every((row) => row.every((cell) => cell !== 0));
 	}
 
-	/**
-	 * PUBLIC_INTERFACE
-	 * Reset the game to initial state
-	 */
+	// PUBLIC_INTERFACE
 	function resetGame() {
 		board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
 		currentPlayer = PLAYER_1;
@@ -95,32 +79,34 @@
 		winningCoords = new Set();
 	}
 
-	/**
-	 * PUBLIC_INTERFACE
-	 * Check for a win condition (4 in a row, any direction).
-	 * Returns {hasWon: boolean, coords: Set<string>} (coords are "row,col" string, for highlighting)
-	 */
+	// PUBLIC_INTERFACE
 	function checkWin(row: number, col: number, player: number): { hasWon: boolean, coords: Set<string> } {
 		const directions = [
-			{ dr: 0, dc: 1 },   // horizontal
-			{ dr: 1, dc: 0 },   // vertical
-			{ dr: 1, dc: 1 },   // diagonal down right
-			{ dr: 1, dc: -1 }   // diagonal down left
+			{ dr: 0, dc: 1 },
+			{ dr: 1, dc: 0 },
+			{ dr: 1, dc: 1 },
+			{ dr: 1, dc: -1 }
 		];
 		for (const { dr, dc } of directions) {
 			let count = 1;
-			let coords = new Set<string>([`${row},${col}`]);
-			// Forward
+			const coords = new Set<string>([`${row},${col}`]);
 			let r = row + dr, c = col + dc;
-			while (r >= 0 && r < ROWS && c >= 0 && c < COLS && board[r][c] === player) {
+			while (
+				r >= 0 && r < ROWS &&
+				c >= 0 && c < COLS &&
+				board[r][c] === player
+			) {
 				count++;
 				coords.add(`${r},${c}`);
 				r += dr;
 				c += dc;
 			}
-			// Backward
-			r = row - dr, c = col - dc;
-			while (r >= 0 && r < ROWS && c >= 0 && c < COLS && board[r][c] === player) {
+			r = row - dr; c = col - dc;
+			while (
+				r >= 0 && r < ROWS &&
+				c >= 0 && c < COLS &&
+				board[r][c] === player
+			) {
 				count++;
 				coords.add(`${r},${c}`);
 				r -= dr;
@@ -133,18 +119,12 @@
 		return { hasWon: false, coords: new Set() };
 	}
 
-	/**
-	 * Get disc color for a player
-	 */
 	function getDiscColor(player: number): string {
 		if (player === PLAYER_1) return COLORS.primary;
 		if (player === PLAYER_2) return COLORS.secondary;
 		return "transparent";
 	}
 
-	/**
-	 * For ARIA and accessible labeling
-	 */
 	function getCellDesc(r: number, c: number): string {
 		const val = board[r][c];
 		if (val === PLAYER_1) return "Blue";
@@ -153,13 +133,11 @@
 	}
 </script>
 
-<!-- UI Layout -->
 <div class="container">
 	<h1 class="game-title">Connect4 Digital</h1>
 	<div class="game-board" role="grid" aria-label="Connect Four Board">
-		<!-- Col selector for dropping disc -->
 		<div class="drop-row">
-			{#each Array(COLS) as _, colIdx (colIdx)}
+			{#each Array(COLS) as _col, colIdx (colIdx)}
 				<button
 					class="drop-btn"
 					disabled={gameOver || isColumnFull(colIdx)}
@@ -171,20 +149,16 @@
 				</button>
 			{/each}
 		</div>
-
-		<!-- Game Grid -->
 		<div class="grid">
-			{#each Array(ROWS) as _, rowIdx (rowIdx)}
+			{#each Array(ROWS) as _row, rowIdx (rowIdx)}
 				<div class="row" key={rowIdx}>
-					{#each Array(COLS) as _, colIdx (colIdx)}
-						<!-- Each cell in the board, position for disc or animation -->
+					{#each Array(COLS) as _col2, colIdx (colIdx)}
 						<div
 							class="cell"
 							role="gridcell"
 							aria-label="{getCellDesc(rowIdx, colIdx)}"
 							data-row={rowIdx} data-col={colIdx}
 							style="{winningCoords.has(`${rowIdx},${colIdx}`) && winner ? 'box-shadow: 0 0 8px 4px #E53935;' : ''}">
-							<!-- Animated disc drop (if in progress & in this cell) -->
 							{#if animatingColumns[colIdx] !== null && animatingColumns[colIdx] === rowIdx}
 								<div class="disc animated" style="background:{getDiscColor(currentPlayer)}"></div>
 							{:else if board[rowIdx][colIdx] !== 0}
@@ -201,8 +175,6 @@
 			{/each}
 		</div>
 	</div>
-
-	<!-- Game Status/Controls -->
 	<div class="controls">
 		<button class="reset-btn" on:click={resetGame} aria-label="Reset Game">Reset Game</button>
 		{#if winner !== null}
@@ -282,7 +254,7 @@
 		opacity: 0.30;
 	}
 	.drop-btn:focus-visible {
-		outline: 2px solid {COLORS.primary};
+		outline: 2px solid #1976D2;
 	}
 	.grid {
 		background: #dbeffd;
