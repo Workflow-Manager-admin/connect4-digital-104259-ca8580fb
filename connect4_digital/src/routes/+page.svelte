@@ -364,10 +364,10 @@
 		margin: 0;
 	}
 	.winner-message {
-		color: {COLORS.accent};
+		color: #E53935;
 		text-shadow: 0 2px 10px #fbe5e4;
 	}
 	.turn-message {
-		color: {COLORS.primary};
+		color: #1976D2;
 	}
 </style>
