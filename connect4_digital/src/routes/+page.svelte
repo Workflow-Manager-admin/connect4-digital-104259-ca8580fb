@@ -137,7 +137,7 @@
 	<h1 class="game-title">Connect4 Digital</h1>
 	<div class="game-board" role="grid" aria-label="Connect Four Board">
 		<div class="drop-row">
-			{#each Array(COLS) as _, colIdx (colIdx)}
+			{#each Array.from(Array(COLS).keys()) as colIdx (colIdx)}
 				<button
 					class="drop-btn"
 					disabled={gameOver || isColumnFull(colIdx)}
@@ -150,9 +150,9 @@
 			{/each}
 		</div>
 		<div class="grid">
-			{#each Array(ROWS) as _, rowIdx (rowIdx)}
+			{#each Array.from(Array(ROWS).keys()) as rowIdx (rowIdx)}
 				<div class="row" key={rowIdx}>
-					{#each Array(COLS) as __, colIdx (colIdx)}
+					{#each Array.from(Array(COLS).keys()) as colIdx (colIdx)}
 						<div
 							class="cell"
 							role="gridcell"
